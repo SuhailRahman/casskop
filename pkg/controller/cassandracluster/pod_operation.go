@@ -33,6 +33,17 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
+
+	//corev1 "k8s.io/api/core/v1"
+// 	"k8s.io/client-go/kubernetes"
+// 	"k8s.io/client-go/tools/clientcmd"
+// 	"k8s.io/client-go/tools/remotecommand"
+//     "github.com/operator-framework/operator-sdk/pkg/k8sutil"
+//
+//     "github.com/golang/glog"
+//     "k8s.io/apimachinery/pkg/fields"
+//     "k8s.io/client-go/tools/cache"
+// 	"reflect"
 )
 
 type finalizedOp struct {
@@ -106,22 +117,96 @@ func (rcc *ReconcileCassandraCluster) handlePodOperation(cc *api.CassandraCluste
 		return breakResyncLoopSwitch, err
 	}
 
-	podsList, err := rcc.ListCassandraClusterPods(cc)
-	if err != nil {
-		return true, err
-	}
-	firstPod, err := GetLastOrFirstPodReady(podsList, false)
-	if err != nil {
-		return true, err
-	}
+// 	podsList, err := rcc.ListCassandraClusterPods(cc)
+// 	if err != nil {
+// 		return true, err
+// 	}
+// 	firstPod, err := GetLastOrFirstPodReady(podsList, false)
+// 	if err != nil {
+// 		return true, err
+// 	}
+//     loadbalancer := ""
+//     kubeconfig := os.Getenv(k8sutil.KubeConfigEnvVar)
+// 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+// 	if err != nil {
+//             glog.Errorln(err)
+//         }
+//     clientset, err := kubernetes.NewForConfig(config)
+//     if err != nil {
+//             glog.Errorln(err)
+//         }
+    logrus.WithFields(logrus.Fields{"cluster": cc.Name, "namespace": cc.Namespace}).Infof("statement before watchlist\n");
+//     watchlist := cache.NewListWatchFromClient(
+//             clientset.CoreV1().RESTClient(),
+//             string(v1.ResourceServices),
+//             cc.Namespace,
+//             fields.Everything(),
+//         )
+//     _, controller := cache.NewInformer(
+//             watchlist,
+//             &v1.Service{},
+//             0, //Duration is int64
+//             cache.ResourceEventHandlerFuncs{
+//                 AddFunc: func(obj interface{}) {
+//                     fmt.Printf("service added: %s \n", obj)
+//                     services, err := clientset.CoreV1().Services(cc.Namespace).List(context.TODO(), metav1.ListOptions{
+//                     FieldSelector: "metadata.name=" + cc.Name,
+//                     })
+//                     clusterIP := ""
+//                     externalIP := ""
+//
+//                     fmt.Printf("Before error\n")
+//                     if err != nil {
+//                         glog.Errorln(err)
+//                     }
+//                     fmt.Printf("After error\n")
+//                     for _, svc := range services.Items {
+//                         clusterIP = svc.Spec.ClusterIP
+//                         externalIP = svc.Spec.LoadBalancerIP
+//                         fmt.Printf("TYPE: %v \n", reflect.TypeOf(svc.Status.LoadBalancer.Ingress[0]))
+//                         fmt.Printf("LB: %v \n", svc.Status.LoadBalancer.Ingress[0])
+//                         fmt.Printf("hostname : %s \n",svc.Status.LoadBalancer.Ingress[0].Hostname)
+//                         fmt.Printf("IP : %s \n",svc.Status.LoadBalancer.Ingress[0].IP)
+//                         loadbalancer := string(svc.Status.LoadBalancer.Ingress[0].Hostname)
+//                         fmt.Printf("LoadBalancer : %s \n",loadbalancer)
+//                         break
+//                     }
+//                     //time.Sleep(10 * time.Second)
+//                     fmt.Printf("ClusterIP: %s \n", clusterIP )
+//                     fmt.Printf("ExternalIp: %s \n", externalIP )
+// //                     for i := 0; i < len(lb); i++ {
+// //                             fmt.Println(lb[i])
+// //                         }
+//                     fmt.Printf("lbservice: %s \n", loadbalancer )
+//                 },
+//                 DeleteFunc: func(obj interface{}) {
+//                     fmt.Printf("service deleted: %s \n", obj)
+//                 },
+//                 UpdateFunc: func(oldObj, newObj interface{}) {
+//                     fmt.Printf("service changed \n")
+//                 },
+//              },
+//          )
+//      logrus.WithFields(logrus.Fields{"cluster": cc.Name, "namespace": cc.Namespace}).Infof("statement after watchlist\n");
 
-	hostName := k8s.PodHostname(*firstPod)
+//     stop := make(chan struct{})
+//         defer close(stop)
+//         go controller.Run(stop)
+//         for {
+//             time.Sleep(time.Second)
+//         }
+//     hostName := k8s.PodHostname(*firstPod)
+    hostName := "cassandra-scdc-cassandra-new.cetus.decc.vmware.com"
+    fmt.Printf("After hostname: %s \n", hostName )
+	logrus.Infof("hostName %s",hostName);
 	jolokiaClient, err := NewJolokiaClient(hostName, JolokiaPort, rcc, cc.Spec.ImageJolokiaSecret, cc.Namespace)
-
+    logrus.Infof("hostName %s",hostName);
+	fmt.Printf("After Jolokia client: %s\n", hostName )
 	hasJoiningNodes, err := jolokiaClient.hasJoiningNodes()
 	if err != nil {
 		return true, err
 	}
+	fmt.Printf("After hasJoiningNodes: %s\n", hostName )
 	if hasJoiningNodes {
 		logrus.WithFields(logrus.Fields{"cluster": cc.Name, "dc": dcName, "rack": rackName,
 			"err": err}).Error("Can't continue cause some nodes are joining the cluster")

@@ -46,6 +46,10 @@ type CassandraBackupSpec struct {
 	Entities              string `json:"entities,omitempty"`
 	// Name of Secret to use when accessing cloud storage providers
 	Secret                string `json:"secret,omitempty"`
+
+    CreateMissingBucket    bool   `json:"CreateMissingBucket,omitempty"`
+
+	MetadataDirective      string `json:"metadataDirective,omitempty"`
 }
 
 type BackupConditionType string

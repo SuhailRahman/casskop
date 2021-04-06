@@ -11,6 +11,7 @@ require (
 	github.com/elazarl/goproxy/ext v0.0.0-20190421051319-9d40249d3c2f // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-openapi/spec v0.19.4
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/instaclustr/instaclustr-icarus-go-client v0.0.0-20210115143219-869427dc2595
 	github.com/jarcoal/httpmock v1.0.4

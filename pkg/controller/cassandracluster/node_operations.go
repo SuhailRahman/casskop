@@ -55,12 +55,18 @@ func (jolokiaClient *JolokiaClient) executeOperation(mBean, operation string,
 /*NewJolokiaClient returns a new Joloka Client for the host name and port provided*/
 func NewJolokiaClient(host string, port int, rcc *ReconcileCassandraCluster,
 	secretRef v1.LocalObjectReference, namespace string) (*JolokiaClient, error) {
+	fmt.Printf(" NewJolokiaClient: %s\n", host )
 	jolokiaClient := JolokiaClient{go_jolokia.NewJolokiaClient(JolokiaURL(host, port)), host}
 	logrus.WithFields(logrus.Fields{"host": host, "port": port,
 		"secretRef": secretRef, "namespace": namespace}).Debug("Creating Jolokia connection")
+	logrus.Infof("before connection");
+	logrus.WithFields(logrus.Fields{"host": host, "port": port,
+		"secretRef": secretRef, "namespace": namespace}).Infof("Creating Jolokia connection")
 	if (secretRef != v1.LocalObjectReference{}) {
 		logrus.WithFields(logrus.Fields{"host": host, "port": port,
 			"secretRef": secretRef, "namespace": namespace}).Debug("Using Secret for Jolokia connection")
+			logrus.WithFields(logrus.Fields{"host": host, "port": port,
+			"secretRef": secretRef, "namespace": namespace}).Infof("Using Secret for Jolokia connection");
 		secret := &v1.Secret{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Secret",
@@ -71,15 +77,18 @@ func NewJolokiaClient(host string, port int, rcc *ReconcileCassandraCluster,
 				Namespace: namespace,
 			},
 		}
+		logrus.Infof("error 1st statement");
 		err := rcc.Client.Get(context.TODO(), types.NamespacedName{Name: secretRef.Name, Namespace: namespace}, secret)
-
+        logrus.Infof("error 2nd statement");
 		if err != nil {
 			logrus.WithFields(logrus.Fields{"host": host, "port": port,
 				"secretRef": secretRef, "namespace": namespace}).Error("Can't get Jolokia secret")
 			return nil, err
 		}
+		logrus.Infof("2nd last statement")
 		jolokiaClient.client.SetCredential(string(secret.Data["username"]), string(secret.Data["password"]))
 	}
+
 	return (*JolokiaClient)(&jolokiaClient), nil
 }
 

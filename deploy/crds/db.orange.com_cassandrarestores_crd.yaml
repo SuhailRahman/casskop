@@ -9,7 +9,7 @@ spec:
     listKind: CassandraRestoreList
     plural: cassandrarestores
     singular: cassandrarestore
-  scope: Namespaced
+  scope: Cluster
   versions:
   - name: v1alpha1
     schema:

@@ -9,7 +9,7 @@ spec:
     listKind: CassandraBackupList
     plural: cassandrabackups
     singular: cassandrabackup
-  scope: Namespaced
+  scope: Cluster
   versions:
   - name: v1alpha1
     schema:
@@ -61,6 +61,10 @@ spec:
                   exclusive so 'k1,k2.t2' is invalid. An empty field will backup all
                   keyspaces
                 type: string
+              metadataDirective:
+                type: string
+              CreateMissingBucket:
+                type: boolean
               schedule:
                 description: Specify a schedule to assigned to the backup. The schedule
                   doesn't enforce anything so if you schedule multiple backups around

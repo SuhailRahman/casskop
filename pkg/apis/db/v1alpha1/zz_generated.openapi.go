@@ -126,7 +126,19 @@ func schema_pkg_apis_db_v1alpha1_CassandraBackupSpec(ref common.ReferenceCallbac
 							Format: "int32",
 						},
 					},
+					"CreateMissingBucket": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
 					"entities": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"metadataDirective": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",

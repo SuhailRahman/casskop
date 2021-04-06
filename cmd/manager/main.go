@@ -33,7 +33,7 @@ import (
 	"github.com/Orange-OpenSource/casskop/pkg/controller"
 	"github.com/Orange-OpenSource/casskop/pkg/controller/cassandracluster"
 	"github.com/Orange-OpenSource/casskop/version"
-	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
+// 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	"github.com/operator-framework/operator-sdk/pkg/leader"
 	"github.com/operator-framework/operator-sdk/pkg/metrics"
 	"github.com/operator-framework/operator-sdk/pkg/ready"
@@ -124,11 +124,12 @@ func main() {
 
 	printVersion()
 
-	namespace, err := k8sutil.GetWatchNamespace()
-	if err != nil {
-		logrus.Error(err, "failed to get watch namespace")
-		os.Exit(1)
-	}
+// 	namespace, err := k8sutil.GetWatchNamespace()
+// 	if err != nil {
+// 		// 		logrus.Error(err, "failed to get watch namespace")
+// 		logrus.Warning(err, "No watch namespace")
+// // 		os.Exit(1)
+// 	}
 
 	// Get a config to talk to the apiserver
 	cfg, err := config.GetConfig()
@@ -160,7 +161,7 @@ func main() {
 
 	// Create a new Cmd to provide shared dependencies and start components
 	mgr, err := manager.New(cfg, manager.Options{
-		Namespace:          namespace,
+		Namespace:          "",
 		MetricsBindAddress: fmt.Sprintf("%s:%d", metricsHost, metricsPort),
 	})
 	if err != nil {

@@ -409,7 +409,9 @@ func (rcc *ReconcileCassandraCluster) CheckNonAllowedScaleDown(cc *api.Cassandra
 			if pod.Status.Phase != v1.PodRunning || pod.DeletionTimestamp != nil {
 				continue
 			}
-			hostName := k8s.PodHostname(pod)
+			//hostName := k8s.PodHostname(pod)
+			hostName := "cassandra-scdc-cassandra-new.cetus.decc.vmware.com"
+
 			logrus.WithFields(logrus.Fields{"cluster": cc.Name}).Debugf("The Operator will ask node %s", hostName)
 			jolokiaClient, err := NewJolokiaClient(hostName, JolokiaPort, rcc,
 				cc.Spec.ImageJolokiaSecret, cc.Namespace)
@@ -690,13 +692,13 @@ func (rcc *ReconcileCassandraCluster) CheckPodsState(cc *api.CassandraCluster,
 
 	logrus.WithFields(logrus.Fields{"cluster": cc.Name, "err": err}).Debug("Get first available pod")
 
-	firstPod, err := GetLastOrFirstPodReady(podsList, false)
-	if err != nil {
-		return err
-	}
+// 	firstPod, err := GetLastOrFirstPodReady(podsList, false)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	hostName := k8s.PodHostname(*firstPod)
-
+// 	hostName := k8s.PodHostname(*firstPod)
+    hostName := "cassandra-scdc-cassandra-new.cetus.decc.vmware.com"
 	logrus.WithFields(logrus.Fields{"cluster": cc.Name,
 		"err": err}).Info(fmt.Sprintf("We will request : %s to catch hostIdMap", hostName))
 
@@ -704,7 +706,7 @@ func (rcc *ReconcileCassandraCluster) CheckPodsState(cc *api.CassandraCluster,
 	if err != nil {
 		return err
 	}
-
+    fmt.Printf("After JolokiaClient: reconcile \n",  )
 	hostIDMap, err := jolokiaClient.hostIDMap()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{"cluster": cc.Name,
